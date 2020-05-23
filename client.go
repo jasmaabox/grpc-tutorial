@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/jasmaabox/grpc-tutorial/chat"
 	"google.golang.org/grpc"
@@ -17,15 +20,21 @@ func main() {
 	defer conn.Close()
 
 	c := chat.NewChatServiceClient(conn)
+	reader := bufio.NewReader(os.Stdin)
 
-	message := chat.Message{
-		Body: "Client says hi!!!",
+	for {
+
+		fmt.Print("<: ")
+
+		s, _ := reader.ReadString('\n')
+
+		res, err := c.SayHello(context.Background(), &chat.Message{
+			Body: s,
+		})
+		if err != nil {
+			log.Fatalf("Error sending SayHello: %s", err)
+		}
+
+		fmt.Printf(">: %s\n", res.Body)
 	}
-
-	res, err := c.SayHello(context.Background(), &message)
-	if err != nil {
-		log.Fatalf("Error sending SayHello: %s", err)
-	}
-
-	log.Printf("Response from server: %s", res.Body)
 }

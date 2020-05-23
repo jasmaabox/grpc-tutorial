@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// Server is gRPC server
+// Server is the gRPC server
 type Server struct{}
 
 // SayHello responds to client with a hello message
